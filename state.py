@@ -1,17 +1,13 @@
 import numpy as np
 from math import log2
 from typing import List
-from gate import Gate
 
 class State:
     def __init__(self, size: int) -> None:
         self.state = np.array([1] + [0] * (2 ** size - 1))
-        self.size = size # Mainly for creating new states of the same size
+        self.size = size
 
-    def apply(self, gate: Gate) -> None:
-        self.state = np.matmul(gate.mat, self.state)
-
-    def get_probailities(self) -> np.array:
+    def get_probabilities(self) -> np.array:
         return self.state ** 2
     
     def reorder_qubits(self, target_order: List[int]) -> None:
@@ -28,4 +24,4 @@ class State:
     def undo_reorder(self) -> None:
         inverse_axes = np.argsort(self.new_axes)
         reshaped = self.state.reshape([2] * len(self.new_axes))
-        self.state = reshaped.transpose(inverse_axes).reshape(-1) 
+        self.state = reshaped.transpose(inverse_axes).reshape(-1)

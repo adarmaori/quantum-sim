@@ -30,12 +30,17 @@ class Gate:
         return state
     
 
-class Measurement:
-    def __init__(self, qubit: int) -> None:
-        self.qubit = qubit
+class Measurement(QuantumOperation):
+    def __init__(self) -> None:
+        super().__init__(lambda state, qubits: self.apply(state, qubits)[0])
 
-    def apply(self, state: State) -> Tuple[State, int]:
+    def apply(self, state: State, qubits: List[int]) -> Tuple[State, int]:
         # Measure the qubits in the computational basis, return the collapsed state
+        try:
+            assert len(qubits) == 1
+        except AssertionError:
+            raise ValueError("Measurement can currently only be applied to a single qubit")
+
         m0 = np.kron(np.array([[1, 0], [0, 0]]), np.eye(len(state.state) // 2))
         p0 = state.state.T @ m0 @ state.state
         phi0 = m0 @ state.state
@@ -53,20 +58,3 @@ class Measurement:
             result = 1
             new_state.state = phi1 / sqrt(p1)
         return new_state, result
-
-if __name__ == "__main__":
-    hadamard = Gate(np.array([[1, 1], [1, -1]]) * (1 / sqrt(2)))
-    bigger = hadamard.enlarge(3)
-    print(bigger.mat)
-
-    cnot = Gate(np.array(
-        [
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 0, 1],
-            [0, 0, 1, 0]
-        ]
-    ))
-    print(cnot.mat)
-    bigger_cnot = cnot.enlarge(4)
-    print(bigger_cnot.mat)
