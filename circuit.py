@@ -1,11 +1,15 @@
 from gate import Gate, QuantumOperation
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 import numpy as np
 from state import State
 from math import sqrt
 
 class Circuit:
-    def __init__(self, size: int, operations: List[Tuple[Union[Gate, QuantumOperation], List[int]]]) -> None:
+    def __init__(
+            self, 
+            size: int, 
+            operations: List[Tuple[Union[Gate, QuantumOperation], List[int]]] = []
+            ) -> None:
         self.size = size
         self.state = State(size)
         self.operations = operations
@@ -14,6 +18,17 @@ class Circuit:
         self.state = State(self.size)
         for operation, qubits in self.operations:
             operation.apply(self.state, qubits)
+
+    def add_operation(
+            self, 
+            operation: Union[Gate, QuantumOperation], 
+            qubits: List[int], 
+            index: Optional[int] = None
+            ) -> None:
+        if index is None:
+            self.operations.append((operation, qubits))
+        else:
+            self.operations.insert(index, (operation, qubits))
 
     def simulate(self, runs: int = 1024) -> np.array:
         res = np.zeros(2 ** self.size, dtype=int)

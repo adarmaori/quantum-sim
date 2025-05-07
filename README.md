@@ -6,4 +6,4 @@ There are more than enough of these online, but I want to build my own to learn 
 
 - [ ] Add visualizations for the circuit and plots for the measurements
 - [ ] Look into performance gains for multi-qubit gates
-- [ ] Unify the infrastructure to support measurements more cleanly
+- [x] Unify the infrastructure to support measurements more cleanly
